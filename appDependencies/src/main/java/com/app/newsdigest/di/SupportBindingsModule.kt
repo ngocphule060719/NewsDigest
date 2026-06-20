@@ -1,17 +1,35 @@
 package com.app.newsdigest.di
 
+import android.content.Context
+import com.app.newsdigest.domain.platform.ConnectivityMonitor
 import com.app.newsdigest.support.ResultResolver
+import com.app.newsdigest.support.network.ConnectivityMonitorImpl
+import com.app.newsdigest.support.notification.NewsNotificationHelper
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object SupportBindingsModule {
+abstract class SupportBindingsModule {
 
-    @Provides
+    @Binds
     @Singleton
-    fun provideResultResolver(): ResultResolver = ResultResolver()
+    abstract fun bindConnectivityMonitor(impl: ConnectivityMonitorImpl): ConnectivityMonitor
+
+    companion object {
+        @Provides
+        @Singleton
+        fun provideResultResolver(): ResultResolver = ResultResolver()
+
+        @Provides
+        @Singleton
+        fun provideNewsNotificationHelper(
+            @ApplicationContext context: Context,
+        ): NewsNotificationHelper = NewsNotificationHelper(context)
+    }
 }

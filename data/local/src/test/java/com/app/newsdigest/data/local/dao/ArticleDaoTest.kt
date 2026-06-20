@@ -1,11 +1,13 @@
 package com.app.newsdigest.data.local.dao
 
+import app.cash.turbine.test
 import com.app.newsdigest.data.local.InMemoryDatabaseHelper
 import com.app.newsdigest.data.local.entity.ArticleEntity
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
@@ -74,6 +76,35 @@ class ArticleDaoTest {
     @Test
     fun getById_unknownId_returnsNull() = runTest {
         assertNull(articleDao.getById("missing"))
+    }
+
+    @Test
+    fun deleteByCategory_removesOnlyMatchingRows() = runTest {
+        articleDao.upsertAll(
+            listOf(
+                sampleArticle(id = "g1", category = "general"),
+                sampleArticle(id = "t1", category = "technology"),
+            ),
+        )
+
+        articleDao.deleteByCategory("technology")
+
+        assertNull(articleDao.getById("t1"))
+        assertNotNull(articleDao.getById("g1"))
+    }
+
+    @Test
+    fun observeByCategory_emitsUpdatesOnUpsert() = runTest {
+        articleDao.observeByCategory("technology").test {
+            assertEquals(0, awaitItem().size)
+
+            articleDao.upsertAll(listOf(sampleArticle(id = "t1", category = "technology")))
+
+            val updated = awaitItem()
+            assertEquals(1, updated.size)
+            assertEquals("t1", updated.first().id)
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     private fun sampleArticle(

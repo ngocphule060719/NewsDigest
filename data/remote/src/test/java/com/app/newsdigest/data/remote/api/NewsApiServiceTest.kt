@@ -6,8 +6,11 @@ import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
+import retrofit2.HttpException
+import java.io.IOException
 
 class NewsApiServiceTest {
     private lateinit var mockWebServer: MockWebServer
@@ -61,5 +64,65 @@ class NewsApiServiceTest {
         assertEquals("us", request.requestUrl?.queryParameter("country"))
         assertEquals("technology", request.requestUrl?.queryParameter("category"))
         assertEquals("100", request.requestUrl?.queryParameter("pageSize"))
+    }
+
+    @Test
+    fun getTopHeadlines_http401_returnsErrorBody() = runTest {
+        mockWebServer.enqueue(
+            MockResponse()
+                .setResponseCode(401)
+                .setBody("""{"status":"error","code":"apiKeyInvalid","message":"Invalid API key"}"""),
+        )
+
+        val service = RemoteApiFactory.createNewsApiService(
+            apiKey = "bad-key",
+            baseUrl = mockWebServer.url("/").toString(),
+        )
+
+        try {
+            service.getTopHeadlines(category = "technology")
+            fail("Expected HttpException for HTTP 401")
+        } catch (e: HttpException) {
+            assertEquals(401, e.code())
+        }
+    }
+
+    @Test
+    fun getTopHeadlines_malformedJson_fails() = runTest {
+        mockWebServer.enqueue(
+            MockResponse()
+                .setResponseCode(200)
+                .setBody("{ not valid json"),
+        )
+
+        val service = RemoteApiFactory.createNewsApiService(
+            apiKey = "test-key",
+            baseUrl = mockWebServer.url("/").toString(),
+        )
+
+        try {
+            service.getTopHeadlines(category = "technology")
+            fail("Expected IOException for malformed JSON")
+        } catch (_: IOException) {
+            // expected
+        }
+    }
+
+    @Test
+    fun apiKeyInterceptor_addsHeader() = runTest {
+        mockWebServer.enqueue(
+            MockResponse().setResponseCode(200)
+                .setBody("""{"status":"ok","totalResults":0,"articles":[]}""")
+        )
+
+        val service = RemoteApiFactory.createNewsApiService(
+            apiKey = "interceptor-key",
+            baseUrl = mockWebServer.url("/").toString(),
+        )
+
+        service.getTopHeadlines(category = "general")
+
+        val request = mockWebServer.takeRequest()
+        assertEquals("interceptor-key", request.getHeader("X-Api-Key"))
     }
 }

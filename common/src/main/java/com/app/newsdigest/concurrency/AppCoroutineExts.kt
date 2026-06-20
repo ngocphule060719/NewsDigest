@@ -1,9 +1,6 @@
-@file:Suppress(IMPORTANT)
-
 package com.app.newsdigest.concurrency
 
 import android.os.Looper
-import com.app.newsdigest.meta.IMPORTANT
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob

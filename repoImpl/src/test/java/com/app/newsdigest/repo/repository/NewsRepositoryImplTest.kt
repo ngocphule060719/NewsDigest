@@ -136,6 +136,74 @@ class NewsRepositoryImplTest {
         assertEquals(2, repository.observeTopHeadlines(Category.TECHNOLOGY).first().size)
     }
 
+    @Test
+    fun getArticle_readsFromRoom_withoutApiCall() = runTest {
+        fakeApi.response = twoArticleResponse()
+        repository.refreshTopHeadlines(Category.TECHNOLOGY)
+        val id = "https://example.com/article-1".toArticleId()
+        fakeApi.shouldThrow = true
+
+        val result = repository.getArticle(id)
+
+        assertTrue(result is Result.Success)
+        assertEquals(id, (result as Result.Success).data.id)
+    }
+
+    @Test
+    fun refreshTopHeadlines_emptyApiResponse_clearsCategory() = runTest {
+        fakeApi.response = twoArticleResponse()
+        repository.refreshTopHeadlines(Category.TECHNOLOGY)
+
+        fakeApi.response = TopHeadlinesResponseDto(
+            status = "ok",
+            totalResults = 0,
+            articles = emptyList(),
+        )
+        repository.refreshTopHeadlines(Category.TECHNOLOGY)
+
+        val headlines = repository.observeTopHeadlines(Category.TECHNOLOGY).first()
+
+        assertTrue(headlines.isEmpty())
+    }
+
+    @Test
+    fun observeTopHeadlines_differentCategories_isolated() = runTest {
+        fakeApi.response = TopHeadlinesResponseDto(
+            status = "ok",
+            totalResults = 1,
+            articles = listOf(
+                sampleDto(
+                    title = "Tech headline",
+                    url = "https://example.com/tech",
+                ),
+            ),
+        )
+        repository.refreshTopHeadlines(Category.TECHNOLOGY)
+
+        fakeApi.response = TopHeadlinesResponseDto(
+            status = "ok",
+            totalResults = 1,
+            articles = listOf(
+                sampleDto(
+                    title = "Sports headline",
+                    url = "https://example.com/sports",
+                ),
+            ),
+        )
+        repository.refreshTopHeadlines(Category.SPORTS)
+
+        val techHeadlines = repository.observeTopHeadlines(Category.TECHNOLOGY).first()
+        val sportsHeadlines = repository.observeTopHeadlines(Category.SPORTS).first()
+
+        assertEquals(1, techHeadlines.size)
+        assertEquals("Tech headline", techHeadlines.first().title)
+        assertEquals(Category.TECHNOLOGY, techHeadlines.first().category)
+
+        assertEquals(1, sportsHeadlines.size)
+        assertEquals("Sports headline", sportsHeadlines.first().title)
+        assertEquals(Category.SPORTS, sportsHeadlines.first().category)
+    }
+
     private fun twoArticleResponse() = TopHeadlinesResponseDto(
         status = "ok",
         totalResults = 2,

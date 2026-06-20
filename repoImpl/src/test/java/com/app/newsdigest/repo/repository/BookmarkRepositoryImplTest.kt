@@ -74,6 +74,24 @@ class BookmarkRepositoryImplTest {
         assertEquals("older", bookmarks.last().articleId)
     }
 
+    @Test
+    fun addBookmark_duplicateId_replacesRow() = runTest {
+        repository.addBookmark(sampleArticle(id = "dup", title = "Original title"))
+        repository.addBookmark(sampleArticle(id = "dup", title = "Updated title"))
+
+        val bookmarks = repository.observeBookmarks().first()
+
+        assertEquals(1, bookmarks.size)
+        assertEquals("Updated title", bookmarks.first().title)
+    }
+
+    @Test
+    fun removeBookmark_unknownId_returnsSuccess() = runTest {
+        val result = repository.removeBookmark("unknown-id")
+
+        assertTrue(result is Result.Success)
+    }
+
     private fun sampleArticle(id: String, title: String = "Title for $id"): Article = Article(
         id = id,
         title = title,

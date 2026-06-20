@@ -13,9 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Bookmark
-import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,7 +21,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.app.designsystem.component.button.IconCircularButton
 import com.app.designsystem.component.card.CardVisuals
 import com.app.designsystem.component.card.FlatCard
 import com.app.designsystem.foundation.Colors
@@ -36,7 +32,7 @@ import com.app.designsystem.theme.Theme
  * News article list card using `card-product-feature` chrome.
  *
  * Layout: 1:1 thumbnail (`product-thumbnail`) + title (`heading-sm`) +
- * source/date metadata (`body-sm`, `steel`) + bookmark (`button-icon-circular`).
+ * source/date metadata (`body-sm`, `steel`) + bookmark toggle icon.
  *
  * @param title Article headline.
  * @param metadata Formatted source and/or publish date (e.g. "BBC News · 2h ago").
@@ -127,11 +123,9 @@ internal fun ArticleCardContent(
             )
         }
 
-        IconCircularButton(
+        BookmarkToggleIcon(
+            isBookmarked = isBookmarked,
             onClick = onBookmarkToggle,
-            icon = if (isBookmarked) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
-            contentDescription = if (isBookmarked) "Remove bookmark" else "Add bookmark",
-            iconTint = if (isBookmarked) Colors.Primary else Colors.Ink,
         )
     }
 }
@@ -146,8 +140,7 @@ internal fun ArticleCardThumbnail(
             .width(88.dp)
             .aspectRatio(1f)
             .clip(RoundedCornerShape(Shapes.Xl))
-            .background(Colors.SurfaceSoft)
-            .padding(Spacing.Base),
+            .background(Colors.SurfaceSoft),
         contentAlignment = Alignment.Center,
     ) {
         if (thumbnail != null) {
