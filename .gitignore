@@ -53,7 +53,22 @@ captures/
 .idea/deploymentTargetSelector.xml
 
 # Local docs & Cursor (not shared via repo)
+/_design/
 /_docs/
 /_plans/
 .cursor/
-.cursor/rules/
+
+# Stitch & MCP (API keys, Cursor MCP config, local agent setup — not shared via repo)
+.cursor/mcp.json
+.cursor/stitch.env
+.cursor/stitch.env.*
+.cursor/*stitch*
+.cursor/open-cursor-with-stitch.sh
+.mcp.json
+mcp.json
+stitch.env
+stitch.env.*
+**/*stitch*.env
+**/*stitch-mcp*
+**/open-cursor-with-stitch.sh
+**/stitch-mcp-proxy.*
