@@ -1,0 +1,32 @@
+{
+  "status": "ok",
+  "totalResults": 2,
+  "articles": [
+    {
+      "source": {
+        "id": "techcrunch",
+        "name": "TechCrunch"
+      },
+      "author": "Jane Doe",
+      "title": "First headline title",
+      "description": "First article description",
+      "url": "https://example.com/article-1",
+      "urlToImage": "https://example.com/image-1.jpg",
+      "publishedAt": "2026-06-20T10:00:00Z",
+      "content": "First article content"
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "BBC News"
+      },
+      "author": null,
+      "title": "Second headline title",
+      "description": null,
+      "url": "https://example.com/article-2",
+      "urlToImage": null,
+      "publishedAt": null,
+      "content": null
+    }
+  ]
+}
