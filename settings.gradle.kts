@@ -25,6 +25,15 @@ dependencyResolutionManagement {
 rootProject.name = "NewsDigest"
 include(
     ":app",
+    ":appDependencies",
+    ":domain",
+    ":repoImpl",
+    ":appSupport",
+    ":common",
+    ":utils",
     ":design-system",
     ":design-system-catalog",
 )
+include(":data:local", ":data:remote")
+project(":data:local").projectDir = file("data/local")
+project(":data:remote").projectDir = file("data/remote")
