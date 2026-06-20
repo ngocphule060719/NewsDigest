@@ -6,6 +6,4 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AppModule {
-    // Phase 3: NetworkModule, DatabaseModule, RepositoryModule, SupportModule, WorkerModule
-}
+object AppModule
