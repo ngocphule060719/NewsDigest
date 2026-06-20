@@ -23,5 +23,8 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "NewsDigest"
-include(":app")
- 
+include(
+    ":app",
+    ":design-system",
+    ":design-system-catalog",
+)

@@ -1,15 +1,59 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
+# OS
 .DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+Thumbs.db
+
+# Gradle
+.gradle/
+build/
+**/build/
+
+# Module build outputs (explicit — matches settings.gradle.kts modules)
+/app/build/
+/design-system/build/
+/design-system-catalog/build/
+/appDependencies/build/
+/domain/build/
+/repoImpl/build/
+/appSupport/build/
+/common/build/
+/utils/build/
+/data/local/build/
+/data/remote/build/
+
+# Secrets & local config (NewsAPI key lives in local.properties — see _docs/overall_doc.md §7)
 local.properties
+secrets.properties
+*.env
+.env
+.env.*
+
+# Android
+captures/
+**/captures/
+.externalNativeBuild/
+**/.externalNativeBuild/
+.cxx/
+**/.cxx/
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# Kotlin
+.kotlin/
+
+# IntelliJ / Android Studio
+*.iml
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+.idea/deploymentTargetSelector.xml
+
+# Local docs & Cursor (not shared via repo)
+/_docs/
+/_plans/
+.cursor/
+.cursor/rules/
